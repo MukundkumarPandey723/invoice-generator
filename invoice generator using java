@@ -1,0 +1,135 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+class Invoice {
+    private String customerName;
+    private String invoiceDate;
+    List<InvoiceItem> items;
+    public Invoice(String customerName, String invoiceDate) {
+        this.customerName = customerName;
+        this.invoiceDate = invoiceDate;
+        this.items = new ArrayList<>();
+    }
+    public void addItem(InvoiceItem item) {
+        items.add(item);
+    }
+    public void removeItem(InvoiceItem item) {
+        items.remove(item);
+    }
+    public void updateItemQuantity(InvoiceItem item, int quantity) {
+        item.setQuantity(quantity);
+    }
+    public double calculateTotal() {
+        double total = 0;
+        for (InvoiceItem item : items) {
+            total += item.getPrice() * item.getQuantity();
+        }
+        return total;
+    }
+    public void printInvoice() {
+        System.out.println("Invoice for " + customerName);
+        System.out.println("Invoice Date: " + invoiceDate);
+        System.out.println("Items:");
+        for (InvoiceItem item : items) {
+            System.out.println(item.toString());
+        }
+        System.out.println("Total: " + calculateTotal());
+    }
+}
+class InvoiceItem {
+    private String itemName;
+    private double price;
+    private int quantity;
+    public InvoiceItem(String itemName, double price, int quantity) {
+        this.itemName = itemName;
+        this.price = price;
+        this.quantity = quantity;
+    }
+    public String getItemName() {
+        return itemName;
+    }
+    public double getPrice() {
+        return price;
+    }
+    public int getQuantity() {
+        return quantity;
+    }
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+    public String toString() {
+        return itemName + " x " + quantity + " = " + (price * quantity);
+    }
+}
+ class InvoiceGenerator {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter customer name: ");
+        String customerName = scanner.nextLine();
+        System.out.print("Enter invoice date: ");
+        String invoiceDate = scanner.nextLine();
+        Invoice invoice = new Invoice(customerName, invoiceDate);
+        while (true) {
+            System.out.println("1. Add item");
+            System.out.println("2. Remove item");
+            System.out.println("3. Update item quantity");
+            System.out.println("4. Generate invoice");
+            System.out.println("5. Exit");
+            System.out.print("Choose an option: ");
+            int option = scanner.nextInt();
+            switch (option) {
+                case 1:
+                    System.out.print("Enter item name: ");
+                    String itemName = scanner.next();
+                    System.out.print("Enter item price: ");
+                    double price = scanner.nextDouble();
+                    System.out.print("Enter item quantity: ");
+                    int quantity = scanner.nextInt();
+                    invoice.addItem(new InvoiceItem(itemName, price, quantity));
+                    break;
+                case 2:
+                    System.out.print("Enter item name to remove: ");
+                    String removeItemName = scanner.next();
+                    InvoiceItem removeItem = null;
+                    for (InvoiceItem item : invoice.items) {
+                        if (item.getItemName().equals(removeItemName)) {
+                            removeItem = item;
+                            break;
+                        }
+                    }
+                    if (removeItem != null) {
+                        invoice.removeItem(removeItem);
+                    } else {
+                        System.out.println("Item not found.");
+                    }
+                    break;
+                case 3:
+                    System.out.print("Enter item name to update quantity: ");
+                    String updateItemName = scanner.next();
+                    System.out.print("Enter new quantity: ");
+                    int newQuantity = scanner.nextInt();
+                    InvoiceItem updateItem = null;
+                    for (InvoiceItem item : invoice.items) {
+                        if (item.getItemName().equals(updateItemName)) {
+                            updateItem = item;
+                            break;
+                        }
+                    }
+                    if (updateItem != null) {
+                        invoice.updateItemQuantity(updateItem, newQuantity);
+                    } else {
+                        System.out.println("Item not found.");
+                    }
+                    break;
+                case 4:
+                    invoice.printInvoice();
+                    break;
+                case 5:
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Invalid option. Please choose again.");
+            }
+        }
+    }
+}
